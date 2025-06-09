@@ -28,7 +28,6 @@ class WP_CLI_Remote_Base extends WP_CLI_Command
         parent::__construct();
 
         $this->current_date = date('Ymd\THis');
-        $this->local_url = WP_HOME;
     }
 
     private function provided_alias_or_default($aliases, $provided, $default): string
@@ -82,11 +81,7 @@ class WP_CLI_Remote_Base extends WP_CLI_Command
 
     protected function check_connection(): void
     {
-        $local_url = $this->run_local('option get home');
-        if ($this->local_url != $local_url) {
-            WP_CLI::error("Local home URL does not match WP_HOME");
-        }
-
+        $this->local_url = $this->run_local('option get home');
         $this->remote_url = $this->run_remote('option get home');
         if ($this->local_url == $this->remote_url) {
             WP_CLI::error("Remote home URL does matches alias URL");
@@ -168,10 +163,6 @@ class WP_CLI_Sync extends WP_CLI_Remote_Base
 
     public function register()
     {
-        if (!defined('WP_CLI') || !WP_CLI) {
-            return;
-        }
-
         WP_CLI::add_command('pull', [$this, 'pull']);
     }
 
